@@ -9,5 +9,5 @@
  * @author matlu
  */
 public class NewClass {
-    
+    System.out.println("salut");
 }
