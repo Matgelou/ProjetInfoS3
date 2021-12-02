@@ -9,5 +9,7 @@
  * @author matlu
  */
 public class NewClass {
-    System.out.println("salut");
+    public static void main (String[] args) {
+    System.out.println("salut ca va");
+}
 }
