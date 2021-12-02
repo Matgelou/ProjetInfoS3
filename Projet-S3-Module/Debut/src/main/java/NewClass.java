@@ -10,6 +10,6 @@
  */
 public class NewClass {
     public static void main (String[] args) {
-    System.out.println("salut ca va et toi, oui!");
+    System.out.println("salut ca va et toi, oui nickel!");
 }
 }
