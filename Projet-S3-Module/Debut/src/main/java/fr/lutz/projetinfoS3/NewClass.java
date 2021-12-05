@@ -11,28 +11,35 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.Month;
 
 /**
  *
  * @author matlu
  */
 public class NewClass {
-     public static Connection connectPostgresql(String host, int port,
+    public static Connection connectPostgresql(String host, int port,
             String database, String user, String pass)
             throws ClassNotFoundException, SQLException {
         // teste la présence du driver postgresql
-        try {
-                Class.forName("org.postgresql.Driver");
-              } catch (ClassNotFoundException ex) {
-              throw new Error("Pilote introuvable");
-}
+        Class.forName("org.postgresql.Driver");
         Connection con = DriverManager.getConnection(
                 "jdbc:postgresql://" + host + ":" + port + "/" + database, user, pass);
         // fixe le plus haut degré d'isolation entre transactions
         con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
         return con;
     }
-     
+//...
+
+    public static void main1(String[] args) {
+        try ( Connection con = connectPostgresql("localhost", 5432,
+                "postgres", "postgres", "pass")) {
+            // testConnection(con);  // ici le programme
+        } catch (ClassNotFoundException | SQLException ex) {
+            throw new Error(ex);
+        }
+    }
 
     public static void createTablePerson(Connection con) throws SQLException {
         try ( Statement st = con.createStatement()) {
@@ -42,6 +49,18 @@ public class NewClass {
                  id integer primary key generated always as identity,
                  nom varchar(50) not null,
                  dateNaissance date
+               )"""
+            );
+        }
+    }
+     public static void createTableSurnom(Connection con) throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            st.executeUpdate(
+                    """
+               create table Surnom(
+                 id integer primary key generated always as identity,
+                 nom varchar(50) not null
+                 
                )"""
             );
         }
@@ -148,8 +167,19 @@ public class NewClass {
             pst.executeUpdate();
         }
     }
-
-      public static void afficheToutesPersonnes(Connection con)
+public static void createSurnom(Connection con,
+            String nom) throws SQLException {
+        try ( PreparedStatement pst = con.prepareStatement(
+                """
+        insert into Surnom (nom)
+          values (?)
+        """)) {
+            pst.setString(1, nom);
+           
+            pst.executeUpdate();
+        }
+    }
+    public static void afficheToutesPersonnes(Connection con)
             throws SQLException {
         try ( Statement st = con.createStatement()) {
             ResultSet res = st.executeQuery(
@@ -165,13 +195,47 @@ public class NewClass {
             }
         }
     }
-     public static void main(String[] args) {
-try ( Connection con = connectPostgresql("localhost", 5432,
-"postgres", "postgres", "pass")) {
-afficheToutesPersonnes(con); // ici le programme
-} catch (ClassNotFoundException | SQLException ex) {
-throw new Error(ex);
+     public static void afficheTousLesSurnoms(Connection con)
+            throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            ResultSet res = st.executeQuery(
+                    "select * from surnom");
+            while (res.next()) {
+                // on peut accéder à une colonne par son nom
+                int id = res.getInt("id");
+                String nom = res.getString("nom");
+                // on peut aussi y accéder par son numéro
+                // !! numéro 1 pour la première
+                
+                System.out.println(id + " : " + nom );
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        try ( Connection con = connectPostgresql(
+                "localhost", 5432,
+                "postgres", "postgres", "pass")) {
+            System.out.println("Connexion OK");
+            
+                     createTablePerson(con);
+            LocalDate ld = LocalDate.of(1985, Month.MARCH, 23);
+            java.sql.Date sqld = java.sql.Date.valueOf(ld);
+            createPerson(con, "Toto", sqld);
+            LocalDate dl = LocalDate.of(1985, Month.MARCH, 23);
+            java.sql.Date sql = java.sql.Date.valueOf(dl);
+             createPerson(con,"Lutz",sql);
+            afficheToutesPersonnes(con);
+            createTableSurnom(con);
+            createSurnom(con,"mat");
+            afficheTousLesSurnoms(con);
+            
+        } catch (Exception ex) {
+            System.out.println("Probleme : " + ex);
+        }
+    }
 }
-    
-}
-     }
+
+  
+
+     
