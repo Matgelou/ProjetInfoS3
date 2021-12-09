@@ -35,91 +35,84 @@ public class CreationTable {
     }
 //...
 
-    public static void main1(String[] args) {
-        try ( Connection con = connectPostgresql("localhost", 5432,
-                "postgres", "postgres", "pass")) {
-            // testConnection(con);  // ici le programme
-        } catch (ClassNotFoundException | SQLException ex) {
-            throw new Error(ex);
-        }
-    }
 
-
-
-
-    public static void createSchema(Connection con) throws SQLException {
+ public static void createTableEtudiant(Connection con) throws SQLException {
         try ( Statement st = con.createStatement()) {
-            // on veut que le schema soit entierement créé ou pas du tout
-            // il nous faut plusieurs ordres pour créer le schema
-            // on va donc explicitement gérer les connections
-            con.setAutoCommit(false);
             st.executeUpdate(
                        """
-               create table Etudiant(
+               create table etudiant(
                  id integer primary key generated always as identity,
                  nom varchar(50) not null,
                 prenom varchar(50) not null,
-                 DateNaissance datemotDePasse varchar(50) not null;
-                motDePasse varchar(50) not null;
-               email varchar(50) not null;
+                 datedenaissance  date ,
+                motDePasse varchar(50) not null,
+               email varchar(50) not null)
                 
-               """);
+               """
+            );
+        }
+    } public static void createTableModule(Connection con) throws SQLException {
+        try ( Statement st = con.createStatement()) {
             st.executeUpdate(
-                    """
-               create table Administrateur(
+                        """
+               create table module(
                  id integer primary key generated always as identity,
-                 nom varchar(50) not null
-                 prenom varchar(50) not null
-                 motDePasse varchar(50) not null
-                 adresseMail varchar(50) not null
-               )
-               """);
-             st.executeUpdate(
-                    """
-               create table Module(
-                 id integer primary key generated always as identity,
-                 nom varchar(50) not null
-                 nbrePersonneMax INTEGER not null
+                 nom varchar(50) not null,
+                 nbrePersonneMax INTEGER not null,
                 nbrePersonneMin INTEGER not null    
             )
-               """);
-               st.executeUpdate(
-                    """
-               create table GroupeModule(
+               """
+                
+            );
+        }
+    } public static void createTableAdmin(Connection con) throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            st.executeUpdate(
+                  """
+               create table administrateur(
+                 id integer primary key generated always as identity,
+                 nom varchar(50) not null,
+                 prenom varchar(50) not null,
+                 motDePasse varchar(50) not null,
+                 adresseMail varchar(50) not null
+               )
+               """
+            );
+        }
+    } public static void createTableGroupeModule(Connection con) throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            st.executeUpdate(
+                   """
+               create table groupeModule(
                  id integer primary key generated always as identity,
                  Creneau  INTEGER NOT NULL
                      
             )
-               """);
-                 st.executeUpdate(
-                    """
-               create table Semestre(
+               """
+            );
+        }
+    } public static void createTableSemestre(Connection con) throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            st.executeUpdate(
+                  """
+               create table semestre(
                  id integer primary key generated always as identity,
                    annee INTEGER NOT NULL,
-                   numero INTEGER NOT NULL
-               """);
-            // si j'arrive ici, c'est que tout s'est bien passé
-            // je valide la transaction
-            con.commit();
-        } catch (SQLException ex) {
-            // si quelque chose se passe mal, j'annule la transaction
-            // avant de resignaler l'exception
-            con.rollback();
-            throw ex;
-        } finally {
-            // pour s'assurer que le autoCommit(true) reste le comportement
-            // par défaut (utile dans la plupart des "select"
-            con.setAutoCommit(true);
+                   numero INTEGER NOT NULL)
+               """
+            );
         }
     }
 
+
+ 
     
 
     public static void createEtudiant(Connection con,
             String nom, String prenom, java.sql.Date datedenaissance, String motdepasse, String email) throws SQLException {
         try ( PreparedStatement pst = con.prepareStatement(
                 """
-        insert into Etudiant (nom,prenom,datedenaissance,motdepasse,email)
+        insert into etudiant (nom,prenom,datedenaissance,motdepasse,email)
           values (?,?,?,?,?)
         """)) {
             pst.setString(1, nom);
@@ -130,50 +123,8 @@ public class CreationTable {
             pst.executeUpdate();
         }
     }
-public static void createSurnom(Connection con,
-            String nom) throws SQLException {
-        try ( PreparedStatement pst = con.prepareStatement(
-                """
-        insert into Surnom (nom)
-          values (?)
-        """)) {
-            pst.setString(1, nom);
-           
-            pst.executeUpdate();
-        }
-    }
-    public static void afficheToutesPersonnes(Connection con)
-            throws SQLException {
-        try ( Statement st = con.createStatement()) {
-            ResultSet res = st.executeQuery(
-                    "select * from person");
-            while (res.next()) {
-                // on peut accéder à une colonne par son nom
-                int id = res.getInt("id");
-                String nom = res.getString("nom");
-                // on peut aussi y accéder par son numéro
-                // !! numéro 1 pour la première
-                java.sql.Date dn = res.getDate(3);
-                System.out.println(id + " : " + nom + " né le " + dn);
-            }
-        }
-    }
-     public static void afficheTousLesSurnoms(Connection con)
-            throws SQLException {
-        try ( Statement st = con.createStatement()) {
-            ResultSet res = st.executeQuery(
-                    "select * from surnom");
-            while (res.next()) {
-                // on peut accéder à une colonne par son nom
-                int id = res.getInt("id");
-                String nom = res.getString("nom");
-                // on peut aussi y accéder par son numéro
-                // !! numéro 1 pour la première
-                
-                System.out.println(id + " : " + nom );
-            }
-        }
-    }
+
+    
 
     public static void main(String[] args) {
         try ( Connection con = connectPostgresql(
@@ -181,7 +132,8 @@ public static void createSurnom(Connection con,
                 "postgres", "postgres", "pass")) {
             System.out.println("Connexion OK");
             
-                     createSchema(con);
+         createTableEtudiant(con);
+         createTableModule(con);
             LocalDate ld = LocalDate.of(1985, Month.MARCH, 23);
             java.sql.Date sqld = java.sql.Date.valueOf(ld);
             createEtudiant(con, "Toto","Titi", sqld,"mat","mat");

@@ -195,7 +195,7 @@ public static void createSurnom(Connection con,
             }
         }
     }
-     public static void afficheTousLesSurnoms(Connection con)
+     public static void afficheToutLesSurnoms(Connection con)
             throws SQLException {
         try ( Statement st = con.createStatement()) {
             ResultSet res = st.executeQuery(
@@ -225,10 +225,11 @@ public static void createSurnom(Connection con,
             LocalDate dl = LocalDate.of(1985, Month.MARCH, 23);
             java.sql.Date sql = java.sql.Date.valueOf(dl);
              createPerson(con,"Lutz",sql);
-            afficheToutesPersonnes(con);
+            
             createTableSurnom(con);
             createSurnom(con,"mat");
-            afficheTousLesSurnoms(con);
+           afficheToutLesSurnoms(con);
+           afficheToutesPersonnes(con);
             
         } catch (Exception ex) {
             System.out.println("Probleme : " + ex);
