@@ -178,6 +178,78 @@ public class CreationTable {
             pst.executeUpdate();
         }
     }
+    public static void afficheEtudiant(Connection con)
+            throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            ResultSet res = st.executeQuery(
+                    "select * from etudiant");
+            while (res.next()) {
+                // on peut accéder à une colonne par son nom
+                int id = res.getInt("id");
+                String nom = res.getString("nom");
+               
+                System.out.println(id + " : " + nom );
+            }
+        }
+    }
+      public static void afficheSemestre(Connection con)
+            throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            ResultSet res = st.executeQuery(
+                    "select * from semestre");
+            while (res.next()) {
+                // on peut accéder à une colonne par son nom
+                int id = res.getInt("id");
+                Integer annee = res.getInt("annee");
+                // on peut aussi y accéder par son numéro
+                // !! numéro 1 pour la première
+               
+                System.out.println(id + "année du semestre" + annee);
+            }
+        }
+    }
+        public static void afficheModule(Connection con)
+            throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            ResultSet res = st.executeQuery(
+                    "select * from module");
+            while (res.next()) {
+                // on peut accéder à une colonne par son nom
+                int id = res.getInt("id");
+                String nom = res.getString("nom");
+                
+                System.out.println(id + " : " + nom );
+            }
+        }
+    }
+          public static void afficheGroupeModule(Connection con)
+            throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            ResultSet res = st.executeQuery(
+                    "select * from person");
+            while (res.next()) {
+                // on peut accéder à une colonne par son nom
+                int id = res.getInt("id");
+                Integer creneau = res.getInt("creneau");
+              
+                System.out.println(id + " : " + creneau );
+            }
+        }
+    }
+            public static void afficheAdmin(Connection con)
+            throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            ResultSet res = st.executeQuery(
+                    "select * from administrateur");
+            while (res.next()) {
+                // on peut accéder à une colonne par son nom
+                int id = res.getInt("id");
+                String nom = res.getString("nom");
+               
+                System.out.println(id + " : " + nom );
+            }
+        }
+    }
   public static void tabledrop(Connection con, String nomtable) throws SQLException {
         //méthode permettant d'effacer une table de la base de donnée
         try {
@@ -214,6 +286,9 @@ public class CreationTable {
             createSemestre(con,1,2);
             createGroupeModule(con,1);
             createSemestre(con,1,3);
+            afficheEtudiant(con);
+            afficheSemestre(con);
+            afficheModule(con);
             
         } catch (Exception ex) {
             System.out.println("Probleme : " + ex);
