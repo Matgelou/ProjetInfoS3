@@ -74,7 +74,7 @@ public class CreationTable {
                  nom varchar(50) not null,
                  prenom varchar(50) not null,
                  motDePasse varchar(50) not null,
-                 adresseMail varchar(50) not null
+                 email varchar(50) not null
                )
                """
             );
@@ -85,7 +85,7 @@ public class CreationTable {
                    """
                create table groupeModule(
                  id integer primary key generated always as identity,
-                 Creneau  INTEGER NOT NULL
+                 creneau  INTEGER NOT NULL
                      
             )
                """
@@ -124,7 +124,60 @@ public class CreationTable {
         }
     }
 
-    
+      public static void createModule(Connection con,
+            String nom, Integer nbrePersonneMax, Integer nbrePersonneMin) throws SQLException {
+        try ( PreparedStatement pst = con.prepareStatement(
+                """
+        insert into module (nom,nbrePersonneMax,nbrePersonneMin)
+          values (?,?,?)
+        """)) {
+            pst.setString(1, nom);
+            pst.setInt(2,nbrePersonneMax );
+            pst.setInt(3, nbrePersonneMin);
+           
+            pst.executeUpdate();
+        }
+    }
+  public static void createAdmin(Connection con,
+            String nom, String prenom,  String motdepasse, String email) throws SQLException {
+        try ( PreparedStatement pst = con.prepareStatement(
+                """
+        insert into administrateur (nom,prenom,motdepasse,email)
+          values (?,?,?,?)
+        """)) {
+            pst.setString(1, nom);
+            pst.setString(2, prenom);
+            pst.setString(3, motdepasse);
+            pst.setString(4,email);
+            pst.executeUpdate();
+        }
+    }
+  public static void createGroupeModule(Connection con,
+            Integer creneau ) throws SQLException {
+        try ( PreparedStatement pst = con.prepareStatement(
+                """
+        insert into groupeModule (creneau)
+          values (?)
+        """)) {
+            pst.setInt(1,creneau);
+            
+            pst.executeUpdate();
+        }
+    }
+  public static void createSemestre(Connection con,
+           Integer annee, Integer numero) throws SQLException {
+        try ( PreparedStatement pst = con.prepareStatement(
+                """
+        insert into semestre (annee, numero)
+          values (?,?)
+        """)) {
+            pst.setInt(1, annee);
+            pst.setInt(2, numero);
+           
+            pst.executeUpdate();
+        }
+    }
+
 
     public static void main(String[] args) {
         try ( Connection con = connectPostgresql(
@@ -134,9 +187,16 @@ public class CreationTable {
             
          createTableEtudiant(con);
          createTableModule(con);
+         createTableSemestre(con);
+         createTableGroupeModule(con);
+         createTableAdmin(con);
             LocalDate ld = LocalDate.of(1985, Month.MARCH, 23);
             java.sql.Date sqld = java.sql.Date.valueOf(ld);
             createEtudiant(con, "Toto","Titi", sqld,"mat","mat");
+            createModule(con,"toto",1,1);
+            createAdmin(con,"toto","titi","salut","matt");
+            createSemestre(con,1,2);
+            createGroupeModule(con,1);
             
             
         } catch (Exception ex) {
