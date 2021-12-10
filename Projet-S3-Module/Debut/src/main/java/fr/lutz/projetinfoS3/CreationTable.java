@@ -164,6 +164,7 @@ public class CreationTable {
             pst.executeUpdate();
         }
     }
+
   public static void createSemestre(Connection con,
            Integer annee, Integer numero) throws SQLException {
         try ( PreparedStatement pst = con.prepareStatement(
@@ -177,13 +178,28 @@ public class CreationTable {
             pst.executeUpdate();
         }
     }
-
+  public static void tabledrop(Connection con, String nomtable) throws SQLException {
+        //méthode permettant d'effacer une table de la base de donnée
+        try {
+            try (Statement st = con.createStatement()) {
+                st.executeUpdate("drop table " + nomtable);
+            }
+        } catch (Exception e) {
+            con.rollback();
+            System.out.println("table inexistante");
+        }
+    }
 
     public static void main(String[] args) {
         try ( Connection con = connectPostgresql(
                 "localhost", 5432,
                 "postgres", "postgres", "pass")) {
             System.out.println("Connexion OK");
+            tabledrop(con,"etudiant");
+            tabledrop(con,"administrateur");
+            tabledrop(con,"module");
+            tabledrop(con,"groupeModule");
+            tabledrop(con,"semestre");
             
          createTableEtudiant(con);
          createTableModule(con);
@@ -197,7 +213,7 @@ public class CreationTable {
             createAdmin(con,"toto","titi","salut","matt");
             createSemestre(con,1,2);
             createGroupeModule(con,1);
-            
+            createSemestre(con,1,3);
             
         } catch (Exception ex) {
             System.out.println("Probleme : " + ex);
