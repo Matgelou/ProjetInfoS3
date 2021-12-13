@@ -276,36 +276,25 @@ public class CreationTable {
             String name ) throws SQLException {  
       try {  
             try (Statement st = con.createStatement()) {
-             st.executeUpdate("delete from Module where nom ="+name);
+             st.executeUpdate("delete from Module where nom ='"+name+"';");
             }
         } catch (Exception e) {
             con.rollback();
             System.out.println("module n'existe pas");
         }
     }
-                  public static void supprimeGroupeModule(Connection con,
-            Integer n ) throws SQLException {
+                  public static void supprimeEtudiant(Connection con,
+            String name ) throws SQLException {
       try {
             try (Statement st = con.createStatement()) {
-                st.executeUpdate("delete from groupeModule where creneau= " + n);
+                st.executeUpdate("delete from Etudiant where nom= '"+name+"';");
             }
         } catch (Exception e) {
             con.rollback();
             System.out.println("creneau inexistant");
         }
     }
-                    public static void supprimeGroupeModule(Connection con,
-            Integer n ) throws SQLException {
-      try {
-            try (Statement st = con.createStatement()) {
-                st.executeUpdate("delete from groupeModule where creneau= " + n);
-            }
-        } catch (Exception e) {
-            con.rollback();
-            System.out.println("creneau inexistant");
-        }
-    }
-
+       
             public static int trouveEtudiant(Connection con, String nom)
             throws SQLException {
         try ( PreparedStatement pst = con.prepareStatement(
@@ -362,8 +351,9 @@ public class CreationTable {
             afficheEtudiant(con);
             afficheSemestre(con);
             afficheModule(con);
+            supprimeEtudiant(con,"Toto");
             
-            supprimeModule(con,"toto");
+           
             
         } catch (Exception ex) {
             System.out.println("Probleme : " + ex);
