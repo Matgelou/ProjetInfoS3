@@ -30,6 +30,7 @@ public class CreationTable {
         Connection con = DriverManager.getConnection(
                 "jdbc:postgresql://" + host + ":" + port + "/" + database, user, pass);
         // fixe le plus haut degré d'isolation entre transactions
+        
         con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
         return con;
     }
@@ -330,7 +331,61 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
             System.out.println("creneau inexistant");
         }
     }
-       
+              public static void changeNomEtudiant(Connection con,
+            String nouveaunom, String nomachange ) throws SQLException {
+      try {
+            try (Statement st = con.createStatement()) {
+                st.executeUpdate("update etudiant set nom='"+nouveaunom+"' where nom='"+nomachange+"';");
+            }
+        } catch (Exception e) {
+            con.rollback();
+            System.out.println("nom  inexistant");
+        }
+    }
+        public static void changeNomModule(Connection con,
+            String nouveaunom, String nomachange ) throws SQLException {
+      try {
+            try (Statement st = con.createStatement()) {
+                st.executeUpdate("update module set nom='"+nouveaunom+"' where nom='"+nomachange+"';");
+            }
+        } catch (Exception e) {
+            con.rollback();
+            System.out.println("nom  inexistant");
+        }
+    }
+           public static void changeNombrePlaceMin(Connection con,
+            int nouveaunbre, String nommodule ) throws SQLException {
+      try {
+            try (Statement st = con.createStatement()) {
+                st.executeUpdate("update module set nbrePersonneMin="+nouveaunbre+" where nom='"+nommodule+"';");
+            }
+        } catch (Exception e) {
+            con.rollback();
+            System.out.println("nom  inexistant");
+        }
+    }
+              public static void changeNombrePlaceMax(Connection con,
+            int nbrenouveau, String nommodule ) throws SQLException {
+      try {
+            try (Statement st = con.createStatement()) {
+                st.executeUpdate("update module set nbrePersonneMAX="+nbrenouveau+" where nom='"+nommodule+"';");
+            }
+        } catch (Exception e) {
+            con.rollback();
+            System.out.println("nom  inexistant");
+        }
+    }
+      public static void changeMDP(Connection con,
+            String nouveaumdp, String ancienmdp ) throws SQLException {
+      try {
+            try (Statement st = con.createStatement()) {
+                st.executeUpdate("update etudiant set motDePasse='"+nouveaumdp+"' where motDePasse='"+ancienmdp+"';");
+            }
+        } catch (Exception e) {
+            con.rollback();
+            System.out.println("ancien mot de passe faux");
+        }
+    }
             public static int trouveEtudiant(Connection con, String nom)
             throws SQLException {
         try ( PreparedStatement pst = con.prepareStatement(
@@ -387,14 +442,11 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
                 "postgres", "postgres", "pass")) {
             
             System.out.println("Connexion OK");
-            tabledrop(con,"etudiant");
-            tabledrop(con,"administrateur");
-            tabledrop(con,"module");
-            tabledrop(con,"groupeModule");
-            tabledrop(con,"semestre");
-            tabledrop(con,"moduleouvert");
+           
             
-            
+           
+         
+           
          createTableEtudiant(con);
          createTableModule(con);
          createTableSemestre(con);
@@ -417,8 +469,10 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
             afficheSemestre(con);
             createTableModuleOuvert(con);
             afficheModule(con);
-            createOuvert(con,7,8);
-            
+            createOuvert(con,1,8);
+            createEtudiant(con,"matthieu","lut",sqld,"mqqqqq","mooo");
+            changeNomEtudiant(con,"benjamin","matthieu");
+            changeNombrePlaceMax(con,50,"toto");
             
             
            
