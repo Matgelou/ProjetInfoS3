@@ -34,7 +34,9 @@ public class CreationTable {
         return con;
     }
 //...
-
+ 
+         
+    
 
  public static void createTableEtudiant(Connection con) throws SQLException {
         try ( Statement st = con.createStatement()) {
@@ -104,10 +106,44 @@ public class CreationTable {
         }
     }
 
-
- 
+public static void createTableModuleOuvert(Connection con) throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            st.executeUpdate(
+                  """
+               create table moduleouvert(
+                 id integer primary key generated always as identity,
+                   idsemestre INTEGER  ,
+                   idmodule INTEGER,  
+                  FOREIGN KEY (idsemestre) REFERENCES semestre(id))
+               """
+            );
+        }
+    }
+ public static void createTableInscription(Connection con) throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            st.executeUpdate(
+                  """
+               create table inscription(                
+                    etudiant INTEGER NOT NULL,
+                   module INTEGER NOT NULL)
+               """
+            );
+        }
+    }
     
-
+ public static void createOuvert(Connection con,
+           Integer idsemestre, Integer idmodule) throws SQLException {
+        try ( PreparedStatement pst = con.prepareStatement(
+                """
+        insert into moduleouvert (idsemestre,idmodule)
+          values (?,?)
+        """)) {
+            pst.setInt(1, idsemestre);
+            pst.setInt(2, idmodule);
+           
+            pst.executeUpdate();
+        }
+    }
     public static void createEtudiant(Connection con,
             String nom, String prenom, java.sql.Date datedenaissance, String motdepasse, String email) throws SQLException {
         try ( PreparedStatement pst = con.prepareStatement(
@@ -226,7 +262,7 @@ public class CreationTable {
             throws SQLException {
         try ( Statement st = con.createStatement()) {
             ResultSet res = st.executeQuery(
-                    "select * from person");
+                    "select * from groupeModule");
             while (res.next()) {
                 // on peut accéder à une colonne par son nom
                 int id = res.getInt("id");
@@ -276,7 +312,7 @@ public class CreationTable {
             String name ) throws SQLException {  
       try {  
             try (Statement st = con.createStatement()) {
-             st.executeUpdate("delete from Module where nom ='"+name+"';");
+             st.executeUpdate("delete from module where nom ='"+name+"';");
             }
         } catch (Exception e) {
             con.rollback();
@@ -287,7 +323,7 @@ public class CreationTable {
             String name ) throws SQLException {
       try {
             try (Statement st = con.createStatement()) {
-                st.executeUpdate("delete from Etudiant where nom= '"+name+"';");
+                st.executeUpdate("delete from etudiant where nom= '"+name+"';");
             }
         } catch (Exception e) {
             con.rollback();
@@ -307,36 +343,64 @@ public class CreationTable {
             return findP.getInt(1);
         }
     }
+       
             
 
   public static void tabledrop(Connection con, String nomtable) throws SQLException {
         //méthode permettant d'effacer une table de la base de donnée
-        try {
+        try { 
+            con.setAutoCommit(false);
             try (Statement st = con.createStatement()) {
                 st.executeUpdate("drop table " + nomtable);
             }
         } catch (Exception e) {
+           
             con.rollback();
             System.out.println("table inexistante");
         }
     }
+   public static boolean inscriptionExists(Connection con, int etudiantId, int moduleId, int semestreId) throws SQLException {
+        try (Statement st = con.createStatement();
+                ResultSet test = st.executeQuery("select * from inscription where "
+                        + "etudiant = " + etudiantId
+                        + " and module = " + moduleId
+                        + " and semestre = " + semestreId)) {
+            return test.next();
+        }
+    }
+   
+   public static final String[][] foreignKeys = new String[][]{
+      
+        {"Ouvert", "module", "Module", "id"},
+        {"Ouvert", "semestre", "Semestre", "id"},
+        {"Inscription", "etudiant", "Etudiant", "id"},
+        {"Inscription", "module", "Module", "id"},
+        {"Inscription", "semestre", "Semestre", "id"}
+    };
+
+ 
+    
    
     public static void main(String[] args) {
         try ( Connection con = connectPostgresql(
                 "localhost", 5432,
                 "postgres", "postgres", "pass")) {
+            
             System.out.println("Connexion OK");
             tabledrop(con,"etudiant");
             tabledrop(con,"administrateur");
             tabledrop(con,"module");
             tabledrop(con,"groupeModule");
             tabledrop(con,"semestre");
+            tabledrop(con,"moduleouvert");
+            
             
          createTableEtudiant(con);
          createTableModule(con);
          createTableSemestre(con);
          createTableGroupeModule(con);
          createTableAdmin(con);
+         
             LocalDate ld = LocalDate.of(1985, Month.MARCH, 23);
             java.sql.Date sqld = java.sql.Date.valueOf(ld);
             createEtudiant(con, "Toto","Titi", sqld,"mat","mat");
@@ -348,10 +412,14 @@ public class CreationTable {
              createGroupeModule(con,1);
               createGroupeModule(con,2);
             createSemestre(con,1,3);
+            createSemestre(con,8,3);
             afficheEtudiant(con);
             afficheSemestre(con);
+            createTableModuleOuvert(con);
             afficheModule(con);
-            supprimeEtudiant(con,"Toto");
+            createOuvert(con,7,8);
+            
+            
             
            
             
