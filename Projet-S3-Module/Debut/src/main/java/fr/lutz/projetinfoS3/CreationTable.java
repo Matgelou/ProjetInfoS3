@@ -146,7 +146,7 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
         }
     }
     public static void createEtudiant(Connection con,
-            String nom, String prenom, java.sql.Date datedenaissance, String motdepasse, String email) throws SQLException {
+            String nom, String prenom, java.sql.Date datedenaissance,  String email,String motdepasse) throws SQLException {
         try ( PreparedStatement pst = con.prepareStatement(
                 """
         insert into etudiant (nom,prenom,datedenaissance,motdepasse,email)
@@ -393,7 +393,9 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
             pst.setString(1, nom);
             ResultSet findP = pst.executeQuery();
             if (!findP.next()) {
-                return -1;
+               System.out.println("salutsalut"); 
+               return -1;
+                
             }
             return findP.getInt(1);
         }
@@ -445,7 +447,12 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
            
             
            
-         
+         tabledrop(con,"etudiant");
+         tabledrop(con,"administrateur");
+         tabledrop(con,"module");
+         tabledrop(con,"groupemodule");
+         tabledrop(con,"moduleouvert");
+         tabledrop(con,"semestre");
            
          createTableEtudiant(con);
          createTableModule(con);
@@ -455,7 +462,7 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
          
             LocalDate ld = LocalDate.of(1985, Month.MARCH, 23);
             java.sql.Date sqld = java.sql.Date.valueOf(ld);
-            createEtudiant(con, "Toto","Titi", sqld,"mat","mat");
+            createEtudiant(con, "Toto","Titi", sqld,"matthieu.lutz@insa-strasbourg.fr","mat");
             createModule(con,"toto",1,1);
             createAdmin(con,"toto","titi","salut","matt");
             createSemestre(con,1,2);
@@ -470,11 +477,12 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
             createTableModuleOuvert(con);
             afficheModule(con);
             createOuvert(con,1,8);
-            createEtudiant(con,"matthieu","lut",sqld,"mqqqqq","mooo");
+            createEtudiant(con,"matthieu","lut",sqld,"ugo.bietterly@insa-strasbourg.fr","mooo");
             changeNomEtudiant(con,"benjamin","matthieu");
             changeNombrePlaceMax(con,50,"toto");
-            
-            
+           int result= trouveEtudiant(con,"Toto");
+            String verif= ConnexionEtudiant.connexionEtudiant(con,"matthieu.lutz@insa-strasbourg.fr","mat");
+            System.out.println(verif);
            
             
         } catch (Exception ex) {
