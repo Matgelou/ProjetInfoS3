@@ -447,13 +447,19 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
            
             
            
-         tabledrop(con,"etudiant");
-         tabledrop(con,"administrateur");
+        
+        tabledrop(con,"administrateur");
+        
+        tabledrop(con,"groupemodule");
+        
+        
+        
+        tabledrop(con,"moduleouvert");
+        
+         tabledrop(con,"etudiant"); 
+         
          tabledrop(con,"module");
-         tabledrop(con,"groupemodule");
-         tabledrop(con,"moduleouvert");
          tabledrop(con,"semestre");
-           
          createTableEtudiant(con);
          createTableModule(con);
          createTableSemestre(con);
@@ -466,6 +472,8 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
             createModule(con,"toto",1,1);
             createAdmin(con,"toto","titi","salut","matt");
             createSemestre(con,1,2);
+            createEtudiant(con,"Lutz","Marcel",sqld,"lutzmarcel@estvideo.fr","1945");
+            createEtudiant(con,"Lutz","Michele",sqld,"lutzmic@estvideo.fr","1");
             createSemestre(con,2,1);
             createGroupeModule(con,1);
              createGroupeModule(con,1);
@@ -481,9 +489,11 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
             changeNomEtudiant(con,"benjamin","matthieu");
             changeNombrePlaceMax(con,50,"toto");
            int result= trouveEtudiant(con,"Toto");
-            String verif= ConnexionEtudiant.connexionEtudiant(con,"matthieu.lutz@insa-strasbourg.fr","mat");
-            System.out.println(verif);
-           
+            
+            
+            
+            String verif= ConnexionEtudiant.connexionEtudiant(con,"ugo.bietterly@ins-strasbourg.fr","tp");
+           System.out.println(verif);
             
         } catch (Exception ex) {
             System.out.println("Probleme : " + ex);

@@ -55,6 +55,7 @@ public class ConnexionEtudiant {
             return findP.getInt(1);
         }
     }
+       
     public static String connexionEtudiant (Connection con, String email, String mdp)
         throws SQLException {
         
@@ -69,11 +70,11 @@ public class ConnexionEtudiant {
             return("mot de passe incorect");
             
         }
-        else if(resulta==1){
-              return ("connexion ok");
+        else if(resulta==-1){
+              return ("mot de passe ou identifiant incorrect");
         }
         else{
-            return("mot de passe ou identifiant incorrect");
+            return("ok");
         }
 
       
