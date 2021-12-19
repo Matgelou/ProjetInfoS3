@@ -372,7 +372,7 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
             }
         } catch (Exception e) {
             con.rollback();
-            System.out.println("nom  inexistant");
+            System.out.println("nom inexistant");
         }
     }
       public static void changeMDP(Connection con,
