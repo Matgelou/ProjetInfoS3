@@ -22,7 +22,7 @@ public class CreateTable {
                  id integer primary key generated always as identity,
                  nom varchar(50) not null,
                 prenom varchar(50) not null,
-                 datedenaissance  date ,
+                 datedenaissance  Localdate ,
                 motDePasse varchar(50) not null,
                email varchar(50) not null)
                 

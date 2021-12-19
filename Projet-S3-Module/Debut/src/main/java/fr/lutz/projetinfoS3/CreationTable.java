@@ -36,6 +36,7 @@ public class CreationTable {
     }
 //...
  
+         
             public static int trouveEtudiant(Connection con, String nom)
             throws SQLException {
         try ( PreparedStatement pst = con.prepareStatement(
