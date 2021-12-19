@@ -494,7 +494,8 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
             
             String verif= ConnexionEtudiant.connexionEtudiant(con,"ugo.bietterly@ins-strasbourg.fr","tp");
            System.out.println(verif);
-            
+            String verifica = ConnexionAdmin.connexionAdmin(con,"matt","salut");
+            System.out.println(verifica);
         } catch (Exception ex) {
             System.out.println("Probleme : " + ex);
         }
