@@ -90,7 +90,11 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
                  id integer primary key generated always as identity,
                    idsemestre INTEGER  ,
                    idmodule INTEGER,  
-                  FOREIGN KEY (idsemestre) REFERENCES semestre(id))
+                  FOREIGN KEY (idsemestre) REFERENCES semestre(id),
+                  FOREIGN KEY (idmodule) REFERENCES module(id)
+                     )
+                  
+                  
                """
             );
         }
@@ -100,11 +104,42 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
             st.executeUpdate(
                   """
                create table inscription(                
-                    etudiant INTEGER NOT NULL,
-                   module INTEGER NOT NULL)
+                    idetudiant INTEGER NOT NULL,
+                   idmodule INTEGER NOT NULL
+                  FOREIGN KEY (idetudiant) REFERENCES etudiant(id),
+                 FOREIGN KEY (idmodule) REFERENCES module(id)
+                  )
                """
             );
         }
     }
     
+
+ public static void createTableHistorique(Connection con) throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            st.executeUpdate(
+                  """
+               create table historique(                
+                    etudiant INTEGER NOT NULL,
+                   module INTEGER NOT NULL)
+                  FOREIGN KEY (idetudiant) REFERENCES etudiant(id),
+                  FOREIGN KEY (idmodule) REFERENCES module(id)
+               """
+            );
+        }
+    }
+  public static void createTableCreneau(Connection con) throws SQLException {
+        try ( Statement st = con.createStatement()) {
+            st.executeUpdate(
+                  """
+               create table creneau(                
+                    idgroupeModule INTEGER NOT NULL,
+                   idmodule INTEGER NOT NULL
+                  FOREIGN KEY (idgroupeModule) REFERENCES groupeModule(id),
+                 FOREIGN KEY (idmodule) REFERENCES module(id)
+                  )
+               """
+            );
+        }
+    }
 }
