@@ -14,7 +14,7 @@ import java.sql.SQLException;
  * @author matlu
  */
 public class CreationLigne {
-    public static void createOuvert(Connection con,
+    public static void createModuleOuvert(Connection con,
            Integer idsemestre, Integer idmodule) throws SQLException {
         try ( PreparedStatement pst = con.prepareStatement(
                 """
@@ -93,6 +93,46 @@ public class CreationLigne {
         """)) {
             pst.setInt(1, annee);
             pst.setInt(2, numero);
+           
+            pst.executeUpdate();
+        }
+    }
+  public static void createInscription(Connection con,
+           Integer idetudiant, Integer idmodule) throws SQLException {
+        try ( PreparedStatement pst = con.prepareStatement(
+                """
+        insert into inscription (idetudiant,idmodule)
+          values (?,?)
+        """)) {
+            pst.setInt(1, idetudiant);
+            pst.setInt(2, idmodule);
+           
+            pst.executeUpdate();
+        }
+    }
+   public static void createHistorique(Connection con,
+           Integer idetudiant, Integer idmodule) throws SQLException {
+        try ( PreparedStatement pst = con.prepareStatement(
+                """
+        insert into inscription (idetudiant,idmodule)
+          values (?,?)
+        """)) {
+            pst.setInt(1, idetudiant);
+            pst.setInt(2, idmodule);
+           
+            pst.executeUpdate();
+        }
+    }
+
+  public static void createCreneau(Connection con,
+           Integer idgroupeModule, Integer idmodule) throws SQLException {
+        try ( PreparedStatement pst = con.prepareStatement(
+                """
+        insert into creneau (idgroupemodule,idmodule)
+          values (?,?)
+        """)) {
+            pst.setInt(1, idgroupeModule);
+            pst.setInt(2, idmodule);
            
             pst.executeUpdate();
         }

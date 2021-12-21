@@ -18,7 +18,7 @@ import java.time.Month;
  *
  * @author matlu
  */
-public class CreationTable {
+public class Main {
    
 
 
@@ -54,19 +54,7 @@ public class CreationTable {
        
             
 
-  public static void tabledrop(Connection con, String nomtable) throws SQLException {
-        //méthode permettant d'effacer une table de la base de donnée
-        try { 
-            con.setAutoCommit(false);
-            try (Statement st = con.createStatement()) {
-                st.executeUpdate("drop table " + nomtable);
-            }
-        } catch (Exception e) {
-           
-            con.rollback();
-            System.out.println("table inexistante");
-        }
-    }
+
    public static boolean inscriptionExists(Connection con, int etudiantId, int moduleId, int semestreId) throws SQLException {
         try (Statement st = con.createStatement();
                 ResultSet test = st.executeQuery("select * from inscription where "
@@ -77,14 +65,7 @@ public class CreationTable {
         }
     }
    
-   public static final String[][] foreignKeys = new String[][]{
-      
-        {"Ouvert", "module", "Module", "id"},
-        {"Ouvert", "semestre", "Semestre", "id"},
-        {"Inscription", "etudiant", "Etudiant", "id"},
-        {"Inscription", "module", "Module", "id"},
-        {"Inscription", "semestre", "Semestre", "id"}
-    };
+
 
  
     
@@ -94,40 +75,31 @@ public class CreationTable {
                 "localhost", 5432,
                 "postgres", "postgres", "pass")) {
             
-            System.out.println("Connexion OK");
-           
             
-           
-        
-        tabledrop(con,"administrateur");
-        
-        tabledrop(con,"groupemodule");
-        
-        
-        
-        tabledrop(con,"moduleouvert");
-        
-         tabledrop(con,"etudiant"); 
-         
-         tabledrop(con,"module");
-         tabledrop(con,"semestre");
+           TableDrop.DropTable(con);
+   
          CreateTable.createTableEtudiant(con);
          CreateTable.createTableModule(con);
          CreateTable.createTableSemestre(con);
          CreateTable.createTableGroupeModule(con);
          CreateTable.createTableAdmin(con);
+         CreateTable.createTableInscription(con);
+         CreateTable.createTableCreneau(con);
+         CreateTable.createTableHistorique(con);
+         
          
             LocalDate ld = LocalDate.of(1985, Month.MARCH, 23);
             java.sql.Date sqld = java.sql.Date.valueOf(ld);
             CreationLigne.createEtudiant(con, "Toto","Titi", sqld,"matthieu.lutz@insa-strasbourg.fr","mat");
             CreationLigne.createModule(con,"toto",1,1);
+           
             CreationLigne.createAdmin(con,"toto","titi","salut","matt");
             CreationLigne.createSemestre(con,1,2);
             CreationLigne.createEtudiant(con,"Lutz","Marcel",sqld,"lutzmarcel@estvideo.fr","1945");
             CreationLigne.createEtudiant(con,"Lutz","Michele",sqld,"lutzmic@estvideo.fr","1");
            CreationLigne.createSemestre(con,2,1);
             CreationLigne.createGroupeModule(con,1);
-             CreationLigne.createGroupeModule(con,1);
+           
               CreationLigne.createGroupeModule(con,2);
             CreationLigne.createSemestre(con,1,3);
             CreationLigne.createSemestre(con,8,3);
@@ -135,13 +107,15 @@ public class CreationTable {
             AfficheBdd.afficheSemestre(con);
             CreateTable.createTableModuleOuvert(con);
             AfficheBdd.afficheModule(con);
-            CreationLigne.createOuvert(con,1,8);
+            CreationLigne.createModuleOuvert(con,1,1);
             CreationLigne.createEtudiant(con,"matthieu","lut",sqld,"ugo.bietterly@insa-strasbourg.fr","mooo");
             ChangeBdd.changeNomEtudiant(con,"benjamin","matthieu");
             ChangeBdd.changeNombrePlaceMax(con,50,"toto");
            int result= trouveEtudiant(con,"Toto");
             
-            
+             CreationLigne.createInscription(con,3,1);
+            CreationLigne.createCreneau(con, 1, 1);
+            CreationLigne.createHistorique(con, 3, 1);
             
             String verif= ConnexionEtudiant.connexionEtudiant(con,"ugo.bietterly@ins-strasbourg.fr","tp");
            System.out.println(verif);

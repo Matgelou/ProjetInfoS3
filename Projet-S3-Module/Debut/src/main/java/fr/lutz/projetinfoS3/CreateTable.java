@@ -77,6 +77,7 @@ public class CreateTable {
                  id integer primary key generated always as identity,
                    annee INTEGER NOT NULL,
                    numero INTEGER NOT NULL)
+                     
                """
             );
         }
@@ -105,7 +106,7 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
                   """
                create table inscription(                
                     idetudiant INTEGER NOT NULL,
-                   idmodule INTEGER NOT NULL
+                   idmodule INTEGER NOT NULL,
                   FOREIGN KEY (idetudiant) REFERENCES etudiant(id),
                  FOREIGN KEY (idmodule) REFERENCES module(id)
                   )
@@ -121,9 +122,10 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
                   """
                create table historique(                
                     etudiant INTEGER NOT NULL,
-                   module INTEGER NOT NULL)
+                   module INTEGER NOT NULL,
                   FOREIGN KEY (idetudiant) REFERENCES etudiant(id),
                   FOREIGN KEY (idmodule) REFERENCES module(id)
+                  )
                """
             );
         }
@@ -134,7 +136,7 @@ public static void createTableModuleOuvert(Connection con) throws SQLException {
                   """
                create table creneau(                
                     idgroupeModule INTEGER NOT NULL,
-                   idmodule INTEGER NOT NULL
+                   idmodule INTEGER NOT NULL,
                   FOREIGN KEY (idgroupeModule) REFERENCES groupeModule(id),
                  FOREIGN KEY (idmodule) REFERENCES module(id)
                   )
